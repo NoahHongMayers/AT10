@@ -3,7 +3,7 @@
  * @author   Noah Hong Mayers | 202430525@edu.clg.qc.ca
  * @version  1.0
  * @date     September 22 2026
- * @brief    Skeleton for a Node.js application using Express framework
+ * @brief    Socket.io Server
  */
 
 //=====================[ Imports ]==========================
@@ -27,25 +27,33 @@ app.use(function (req, res, next) {
     res.render("pages/404.ejs");
 });
 // Start the server
-var server = app.listen(PORT, function(){
+var server = app.listen(PORT, function () {
     console.log('Server launched on port ' + PORT);
 });
 
-var io = require('socket.io')(server); 
-io.sockets.on('connection', function (socket) { 
-console.log('A user is connected'); 
-}); 
+var io = require('socket.io')(server);// Initialize Socket.IO with the server
+io.sockets.on('connection', function (socket) {// Listen for new client connections
 
-//Errors
-app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    socket.on('message', function (message) {// Listen for 'message' events from the client
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+        var parts = message.split(':');
+        var alarmHour = parts[0];
+        var alarmMinutes = parts[1];
+
+        socket.broadcast.emit( 'message','Another Client has set an alarm for: ' + alarmHour + ':' + alarmMinutes);
+    });
 });
 
-module.exports = {app: app};
+//Errors
+app.use(function (err, req, res, next) {
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+});
+
+module.exports = { app: app };
 
 //=====================[ End of File ]==========================

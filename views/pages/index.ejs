@@ -3,7 +3,7 @@
  * @author   Noah Hong Mayers | 202430525@edu.clg.qc.ca
  * @version  1.0
  * @date     September 22 2026
- * @brief    Skeleton for a Node.js application using Express framework
+ * @brief    Socket.io Client
  */
  -->
 <!DOCTYPE html>
@@ -15,27 +15,27 @@
 
         <%- include('../partials/header.ejs') %>
 
-            <h1>Welcome to the Home Page</h1>
-        
+            <h1>Alarm</h1>
+
             <h2 id="timer"></h2>
+            <div id="alarmMessage"></div>
 
-           
-            </div>
-
-
+            <form onsubmit="return false;">
+                <label for="alarm">Alarm time:</label>
+                <input type="time" id="alarm">
+                <button type="button" id="saveAlarm">Save</button>
+            </form>
 
             <%- include('../partials/footer.ejs') %>
 
                 <script src="/socket.io/socket.io.js"></script>
-                <script>
-                    var socket = io.connect('http://localhost:8080'); 
-                </script>
-
-                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <script type="text/javascript"
+                    src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
                 <script>
+                    var socket = io.connect('http://localhost:8080');// Establish a connection to the Socket.IO server running on localhost at port 8080
 
-                    $(function () {
+                    $(function () {// Wait for the DOM to be fully loaded before executing the code
                         function Clock() {
                             var date = new Date();
                             var h = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
@@ -43,10 +43,17 @@
                         }
                         Clock();
                         setInterval(Clock, 1000);
+
+                        $('#saveAlarm').click(function () {
+                            socket.emit('message', $('#alarm').val());
+                            $('#alarmMessage').text('You set the Alarm for: ' + $('#alarm').val());
+                        });
+
+                        socket.on('message',function(message){
+                            $('#alarmMessage').text(message);
+                        });
                     });
-
                 </script>
-
     </body>
 
 </html>
