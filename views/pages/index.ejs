@@ -12,17 +12,41 @@
 <%- include('../partials/head.ejs') %>
 
     <body>
-        
+
         <%- include('../partials/header.ejs') %>
 
-        <h1>Welcome to the Home Page</h1>
+            <h1>Welcome to the Home Page</h1>
+        
+            <h2 id="timer"></h2>
 
-        <%- include('../partials/footer.ejs') %>
+           
+            </div>
 
-        <script src="/socket.io/socket.io.js"></script> 
-        <script>  
-            var socket = io.connect('http://localhost:8080'); 
-        </script>
+
+
+            <%- include('../partials/footer.ejs') %>
+
+                <script src="/socket.io/socket.io.js"></script>
+                <script>
+                    var socket = io.connect('http://localhost:8080'); 
+                </script>
+
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+                <script>
+
+                    $(function () {
+                        function Clock() {
+                            var date = new Date();
+                            var h = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                            $('#timer').text(h);
+                        }
+                        Clock();
+                        setInterval(Clock, 1000);
+                    });
+
+                </script>
+
     </body>
 
 </html>
