@@ -8,7 +8,7 @@
 
 //=====================[ Imports ]==========================
 
-const PORT = 3000;                                  // Define the port number for the server
+const PORT = 8080;                                  // Define the port number for the server
 var express = require('express');                   // Import the Express framework
 var app = express();                                // Create an instance of the Express application
 app.set('view engine', 'ejs')                       // Set the view engine to EJS for rendering templates
@@ -27,9 +27,14 @@ app.use(function (req, res, next) {
     res.render("pages/404.ejs");
 });
 // Start the server
-let server = app.listen(PORT, function(){
+var server = app.listen(PORT, function(){
     console.log('Server launched on port ' + PORT);
 });
+
+var io = require('socket.io')(server); 
+io.sockets.on('connection', function (socket) { 
+console.log('A user is connected'); 
+}); 
 
 //Errors
 app.use(function(err, req, res, next) {
