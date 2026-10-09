@@ -34,6 +34,7 @@
 
                 <script>
                     var socket = io.connect('http://localhost:8080');// Establish a connection to the Socket.IO server running on localhost at port 8080
+                    var parts = null;
                     var alarmHour = null;
                     var alarmMinutes = null;
 
@@ -46,7 +47,7 @@
                             var h = hours + ":" + minutes + ":" + seconds;
                             $('#timer').text(h);
 
-                            if(minutes = alarmMinutes && hours == alarmHour && seconds == 0) {
+                            if(minutes == alarmMinutes && hours == alarmHour && seconds == 0) {
                                 alert('Alarm! The time is ' + h);
                             }
                         }
@@ -57,17 +58,15 @@
                             socket.emit('message', $('#alarm').val());//emit a 'message' event to the server with the value of the alarm
                             $('#alarmMessage').text('You set the Alarm for: ' + $('#alarm').val());//display the set alarm in alarmMessage
                             parts = $('#alarm').val().split(':');
-                            alarmHour = parts[0];
-                            alarmMinutes = parts[1];
+                            alarmHour = Number(parts[0]);
+                            alarmMinutes = Number(parts[1]);
                         });
 
                         socket.on('message', function (message) {//onMessage
                             $('#alarmMessage').text('Another client has set an alarm for: ' + message);//display the message received from the server in alarmMessage
-                            var parts = message.split(':');
-                            alarmHour = parts[0];
-                            alarmMinutes = parts[1];
-
-
+                            parts = message.split(':');
+                            alarmHour = Number(parts[0]);
+                            alarmMinutes = Number(parts[1]);
                         });
                     });
                 </script>
