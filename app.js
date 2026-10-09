@@ -40,7 +40,7 @@ io.sockets.on('connection', function (socket) {// Listen for new client connecti
         var alarmHour = parts[0];
         var alarmMinutes = parts[1];
 
-        socket.broadcast.emit( 'message','Another Client has set an alarm for: ' + alarmHour + ':' + alarmMinutes);
+        socket.broadcast.emit( 'message', alarmHour + ':' + alarmMinutes);
     });
 });
 

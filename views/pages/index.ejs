@@ -34,23 +34,40 @@
 
                 <script>
                     var socket = io.connect('http://localhost:8080');// Establish a connection to the Socket.IO server running on localhost at port 8080
+                    var alarmHour = null;
+                    var alarmMinutes = null;
 
                     $(function () {// Wait for the DOM to be fully loaded before executing the code
                         function Clock() {
                             var date = new Date();
-                            var h = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                            var minutes = date.getMinutes();
+                            var hours = date.getHours();
+                            var seconds = date.getSeconds();
+                            var h = hours + ":" + minutes + ":" + seconds;
                             $('#timer').text(h);
+
+                            if(minutes = alarmMinutes && hours == alarmHour && seconds == 0) {
+                                alert('Alarm! The time is ' + h);
+                            }
                         }
                         Clock();
                         setInterval(Clock, 1000);
 
-                        $('#saveAlarm').click(function () {
-                            socket.emit('message', $('#alarm').val());
-                            $('#alarmMessage').text('You set the Alarm for: ' + $('#alarm').val());
+                        $('#saveAlarm').click(function () {// When the "Save" button is clicked,
+                            socket.emit('message', $('#alarm').val());//emit a 'message' event to the server with the value of the alarm
+                            $('#alarmMessage').text('You set the Alarm for: ' + $('#alarm').val());//display the set alarm in alarmMessage
+                            parts = $('#alarm').val().split(':');
+                            alarmHour = parts[0];
+                            alarmMinutes = parts[1];
                         });
 
-                        socket.on('message',function(message){
-                            $('#alarmMessage').text(message);
+                        socket.on('message', function (message) {//onMessage
+                            $('#alarmMessage').text('Another client has set an alarm for: ' + message);//display the message received from the server in alarmMessage
+                            var parts = message.split(':');
+                            alarmHour = parts[0];
+                            alarmMinutes = parts[1];
+
+
                         });
                     });
                 </script>
